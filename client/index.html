@@ -1,0 +1,58 @@
+<html>
+	<head>
+		<link rel ="stylesheet" href ="css_src_files/materialize.css" >
+		<script src = "js_src_files/angular.min.js"></script>
+		<script src = "js_src_files/angular-route.min.js"></script>
+		<script src = "js_src_files/jquery.js"></script>
+		<script src = "js_src_files/materialize.js"></script>
+		<script type = "text/javascript">
+			var app = angular.module('app', ['ngRoute']);
+
+			app.config(function($routeProvider){
+				// $routeProvider
+			});
+
+			app.service('UserService', function($http){
+				var service = {};
+				var currentUser;
+
+				service.insertUser = function(incoming, callback){
+					currentUser = incoming;
+					callback(currentUser);
+					console.log(currentUser.firstName);
+				};
+
+				service.getUser = function(callback){
+					callback(currentUser);
+					return currentUser;
+				};
+
+				return service;
+			});
+
+			app.controller('UsersController', function(UserService, $location){
+				var vm = this;
+
+				UserService.getUser(function(delivered){
+					vm.currentUser = delivered;
+				});
+
+				vm.insertUser = function(incoming){
+					console.log(incoming.firstName);
+					UserService.insertUser(incoming, function(delivered){
+						vm.currentUser = delivered;
+					});
+				};
+			});
+		</script>
+	</head>
+	<body ng-app = 'app'>
+		<div ng-controller = "UsersController as user">
+		<h1> {{ user.currentUser.username }} </h1>
+		<input type = "text" ng-model = "newUser.firstName" placeholder = "First Name">
+		<input type = "text" ng-model = "newUser.lastName" placeholder = "Last Name">
+		<input type = "text" ng-model = "newUser.username" placeholder = "username">
+		<button ng-click = "user.insertUser(newUser)"> Insert User </button>
+		</div>
+	</body>
+</html>
